@@ -37,6 +37,10 @@ Instead of running @$ locomotive_editor push -t [your_target] -r content_entries
 
 bc. $ ./bin/locomotive_editor push -t [your_target] -r content_entries
 
+h2. What's The Patch?
+
+See "commit 0b41e536c4":https://github.com/widescape/locomotive_editor_association_patch/commit/0b41e536c40158a7369244050333eaa8f35a2ed4 for the actual fixes.
+
 h2. Credits
 
 Copyright (c) 2012 "Robert Wünsch":http://www.widescape.net/, released under the MIT license
