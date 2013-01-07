@@ -1,6 +1,7 @@
 h1. Locomotive Editor Association Patch
 
-This unofficial patch for the "Locomotive Editor":http://www.locomotivecms.com/modules/locomotive-editor enables pushing of content_entries with associations.
+
+This unofficial patch for the "Locomotive Editor":http://www.locomotivecms.com/modules/locomotive-editor allows pushing of content_entries with belongs_to and many_to_many associations.
 
 h2. Requirements
 
