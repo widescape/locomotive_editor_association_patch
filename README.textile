@@ -1,7 +1,7 @@
 h1. Locomotive Editor Association Patch
 
 
-This unofficial patch for the "Locomotive Editor":http://www.locomotivecms.com/modules/locomotive-editor allows pushing of content_entries with belongs_to and many_to_many associations.
+This unofficial patch for the "Locomotive Editor":http://www.locomotivecms.com/modules/locomotive-editor allows pushing of @content_entries@ with @belongs_to@ and @many_to_many@ associations.
 
 h2. Requirements
 
@@ -9,7 +9,7 @@ This unofficial patch was tested with locomotive_editor 1.0.0.rc15 and 1.0.0.rc1
 
 h2. Installation
 
-#1 Copy the folders @bin@ and @lib@ into your Locomotive Editor site folder:
+#1 "Download this repository":https://github.com/widescape/locomotive_editor_association_patch/archive/master.zip and copy the folders @bin@ and @lib@ into your Locomotive Editor site folder:
 
 bc. /app
 /bin <-- Copy the bin folder here
@@ -33,9 +33,9 @@ That's it.
 
 h2. How To Use
 
-Instead of running @$ locomotive_editor push -t [your_target] -f -r content_entries@ now run:
+Instead of running @$ locomotive_editor push -t [your_target] -r content_entries@ now run:
 
-bc. $ ./bin/locomotive_editor push -t [your_target] -f -r content_entries
+bc. $ ./bin/locomotive_editor push -t [your_target] -r content_entries
 
 h2. Credits
 
