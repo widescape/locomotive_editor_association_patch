@@ -51,23 +51,28 @@ module LocomotiveEditor
 
       def build_params(entry)
         entry.to_hash.tap do |hash|
-          self.content_type.ordered_fields do |field|
+          self.content_type.ordered_fields.map do |field| # FIXED: Added .map to actually do something :-)
             case field.type.to_sym
             when :string, :text
               # TODO: To be tested
-              self.push_content_assets(hash[field['name']])
+              self.push_content_assets!(hash[field.name]) # FIXED: Added exclamation mark to call the actual method push_content_assets!
             when :file
               # TODO: To be tested
-              hash[field['name']] = File.new(hash[field['name']])
+              unless hash[field.name].nil? # FIXED: Only create a file if the field has a value
+                hash[field.name] = File.new(hash[field.name])
+              end
             when :belongs_to
-              entry_id = fetch_entry_id(entry.safe_attributes[field.name.to_sym], field.target_content_type)
-
-              if entry_id
-                hash["#{field.name}_id".to_sym] = entry_id
+              reference = entry.send(field.name.to_sym) # FIXED: Get the real reference object, not the string value.
+              if reference
+                entry_id = fetch_entry_id(reference.slug, field.target_content_type) # FIXED: Use the reference's slug, not the string value.
+                
+                if entry_id
+                  hash["#{field.name}_id".to_sym] = entry_id
+                end
               end
             when :many_to_many
-              hash["#{field.name.singularize}_ids".to_sym] = (entry.safe_attributes[field.name.to_sym] || []).map do |permalink|
-                fetch_entry_id(permalink, field.target_content_type)
+              hash["#{field.name.singularize}_ids".to_sym] = (entry.send(field.name.to_sym) || []).map do |reference| # FIXED: Get the real reference object, not the string value.
+                fetch_entry_id(reference.slug, field.target_content_type) # FIXED: Use the reference's slug, not the string value.
               end.compact
             end
           end
