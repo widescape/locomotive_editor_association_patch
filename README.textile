@@ -1,0 +1,41 @@
+h1. Locomotive Editor Association Patch
+
+This unofficial patch for the "Locomotive Editor":http://www.locomotivecms.com/modules/locomotive-editor enables pushing of content_entries with associations.
+
+h2. Requirements
+
+This unofficial patch was tested with locomotive_editor 1.0.0.rc15 and 1.0.0.rc17.
+
+h2. Installation
+
+#1 Copy the folders @bin@ and @lib@ into your Locomotive Editor site folder:
+
+bc. /app
+/bin <-- Copy the bin folder here
+/config
+ - compass.rb <-- Edit this file
+/lib <-- Copy the lib folder here
+/public
+
+#2 Write these lines to the end of the file @/config/compass.rb@:
+
+bc. LocomotiveEditor::Logger.info '...loading patches'
+require File.join(LocomotiveEditor.site_root, 'lib', 'editor_decorator', 'editor_decorator.rb')
+
+(We're just using the fact that the file @compass.rb@ is loaded by locomotive_editor at startup)
+
+#3 Ensure that @/bin/locomotive_editor@ is executeable by running in your console:
+
+bc. $ chmod +x bin/locomotive_editor
+
+That's it.
+
+h2. How To Use
+
+Instead of running @$ locomotive_editor push -t [your_target] -f -r content_entries@ now run:
+
+bc. $ ./bin/locomotive_editor push -t [your_target] -f -r content_entries
+
+h2. Credits
+
+Copyright (c) 2012 "Robert Wünsch":http://www.widescape.net/, released under the MIT license

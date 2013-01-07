@@ -1,0 +1,128 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)))
+$LOAD_PATH.unshift(File.join(File.dirname(File.expand_path(__FILE__)), '..', 'lib'))
+
+require 'locomotive_editor'
+require 'locomotive_editor/core_ext'
+require 'locomotive_editor/commands'
+require 'locomotive_editor/site_templates'
+
+require 'optparse'
+require 'colorize'
+
+LocomotiveEditor::Logger.info '...loading custom extensions'
+require File.join(File.dirname(File.expand_path(__FILE__)), '..', 'lib', 'editor_decorator', 'editor_decorator.rb')
+
+options = {
+  :name             => nil,
+  :force            => false,
+  :debug            => false
+}
+
+def self.error_message(msg)
+  puts "\n\t" + "[#{msg}]".colorize(:color => :white, :background => :red) + "\n\n"
+  puts @optparse
+  copyright
+  exit
+end
+
+def copyright
+  puts "\n\nCopyright (c) #{Time.now.year} NoCoffee. e-mail: support@locomotivecms.com\n"
+end
+
+def command_message
+  """
+Please enter a command:
+
+\t* create          - create a new site with all the different folders and files needed by the Locomotive editor
+\t* list            - list all the sites under a parent directory
+\t* list_templates  - list all the site templates avaible within the editor
+\t* generate        - generate a new content type
+\t* run             - launch the Locomotive editor webserver to serve a site or all the sites depending on the folder
+\t* push            - push pages, snippets, theme assets, assets or content types to a Locomotive engine instance
+\t* help            - display some help about a command"""
+end
+
+@optparse = OptionParser.new do |opts|
+
+  opts.banner = "Usage: locomotive_editor [run|list|list_templates|create|generate|push|help] [options]\n\n"
+
+  opts.on('-n', '--name NAME', 'site name or site folder name') do |name|
+    options[:name] = name
+  end
+
+  opts.on('-s', '--template NAME', 'Use this option if you want to use Twitter bootstrap when you create a new site') do |name|
+    options[:template] = name
+  end
+
+  opts.on('-f', '--force', 'Force the execution of a command') do
+    options[:force] = true
+  end
+
+  opts.on('-l', '--lib LOADER_FILE', 'Load a ruby loader file which will load external ruby libs') do |loader_file|
+    options[:loader_file] = loader_file
+  end
+
+  opts.on('-r', '--resource RESOURCE_NAME', 'Set the resource (theme_assets) when pushing to a Locomotive instance') do |resource|
+    options[:resource] = resource
+  end
+
+  opts.on('-t', '--target TARGET_ENV', 'Set the target environment when pushing to a Locomotive instance') do |target|
+    options[:target] = target
+  end
+
+  opts.on('-o', '--only RESOURCES', 'Set the resources to be included when pushing to a Locomotive instance. List of names or files') do |only|
+    options[:only] = only
+  end
+
+  opts.on('-d', '--debug', 'Display stack trace if errors') do
+    options[:debug] = true
+  end
+
+  opts.on( '-h', '--help', 'Display this screen' ) do
+    puts command_message + "\n\n"
+    puts opts
+    copyright
+    exit
+  end
+end
+
+@optparse.parse!
+
+if ARGV.empty?
+  error_message command_message
+end
+
+begin
+  case ARGV.delete_at(0).downcase
+  when 'run'
+    LocomotiveEditor::Commands::Run.new(options).run!
+  when 'list'
+    LocomotiveEditor::Commands::List.new(options).run!
+  when 'create'
+    LocomotiveEditor::Commands::Create.new(options).run!
+  when 'list_templates'
+    LocomotiveEditor::Commands::ListTemplates.new(options).run!
+  when 'generate'
+    LocomotiveEditor::Commands::Generate.new(options, ARGV).run!
+  when 'upgrade'
+    LocomotiveEditor::Commands::Upgrade.new(options).run!
+  when 'push'
+    LocomotiveEditor::Commands::Push.new(options).run!
+  when 'help'
+    LocomotiveEditor::Commands::Help.new(options, ARGV).run!
+    copyright
+  else
+    error_message "Unknown command '#{ARGV[0]}'"
+  end
+rescue Exception => e
+  puts e.backtrace if options[:debug]
+  error_message e.message
+end
+
+# > locomotive list
+# > locomotive run
+# > locomotive create [--name=<site name>]
+# > locomotive generate [--name=<site name] <content_type> <field_1>:<type> <field_2>:<type> ...
+
